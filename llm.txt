@@ -1,0 +1,24 @@
+# Preview Deployer – Documentation (docs.prvue.dev)
+
+Preview Deployer creates isolated preview environments for backend applications when GitHub pull requests are opened. Each PR gets its own Docker containers (app + database), path-based routing via nginx, and automatic cleanup when the PR closes or after a configurable TTL.
+
+## Documentation site (Mintlify)
+
+This documentation lives in the docs.prvue.dev repo and is built with Mintlify. It is the canonical user and contributor docs for Preview Deployer.
+
+## Main sections
+
+- **Getting Started**: Introduction (index), Quickstart (prerequisites, tokens, init, setup, first PR).
+- **Guides**: Configuration reference (preview-config.yml, CLI config, env vars, Terraform/Ansible), Architecture (components, data flow, security, deployment tracking).
+- **Examples**: Overview of supported vs custom-compose setups; one page per example repo: NestJS, Laravel, Go (supported frameworks with built-in templates), Python, Rust (repo-owned docker-compose.preview.yml).
+- **Operations**: Testing (Jest, unit/integration/E2E, guidelines), Troubleshooting (setup, deployment, runtime, security issues).
+- **Reference**: How the orchestrator works (webhooks, containers, flow), Implementation plan (canonical plan for contributors), Agent handoff prompt (Cursor/agent session prompt), Documentation guide (rules and standards for writing docs).
+
+## Main repo and example repos
+
+- **Main repo**: preview-deployer (Terraform, Ansible, orchestrator, CLI). Replace "your-org" with your org when linking.
+- **Example repos**: nestjs-project-preview-example, laravel-project-preview-example, go-project-preview-example, python-project-preview-example, rust-project-preview-example. Use placeholder URLs until published; document "Replace with your repo URL" where relevant.
+
+## For AI tools
+
+Use this file as a map: when adding new sections, example repos, or restructuring the docs, update llm.txt so the "map" stays accurate. See the Documentation guide (reference/documentation-guide) in the docs for full rules on contributing to the documentation.

@@ -1,43 +1,38 @@
-# Mintlify Starter Kit
+# Preview Deployer Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+This repository contains the official documentation for [Preview Deployer](https://github.com/your-org/preview-deployer)—automated preview deployment for backend applications on GitHub PRs. The site is built with [Mintlify](https://mintlify.com) and published at **docs.prvue.dev**.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## Contents
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+- **Getting Started**: Introduction, Quickstart
+- **Guides**: Configuration, Architecture
+- **Examples**: NestJS, Laravel, Go, Python, Rust example repos
+- **Operations**: Testing, Troubleshooting
+- **Reference**: Orchestrator internals, Implementation plan, Agent handoff, Documentation guide
 
 ## Development
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) and run the dev server from this repo root:
 
-```
-npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
-mint dev
+```bash
+npm i -g mintlify
+mintlify dev
 ```
 
-View your local preview at `http://localhost:3000`.
+Open **http://localhost:3000** to preview the docs. Edits to MDX files and `docs.json` hot-reload.
 
-## Publishing changes
+**Note:** If the dev server fails, run `mintlify update` to ensure you have the latest CLI. If a page 404s, confirm you're in the repo root where `docs.json` lives.
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+## Publishing
 
-## Need help?
+Deployments are typically triggered by your host (e.g. Mintlify dashboard, or CI). Push changes to the default branch; the published site at docs.prvue.dev updates according to your deployment setup.
 
-### Troubleshooting
+## Contributing to the docs
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+- Follow the [Documentation guide](https://docs.prvue.dev/reference/documentation-guide) for structure, Examples/Reference standards, internal links, and when to update `llm.txt`.
+- Use the Mintlify and technical writing rules in [.cursor/rules.md](.cursor/rules.md) (frontmatter, components, tone).
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+## Resources
+
+- [Preview Deployer repo](https://github.com/your-org/preview-deployer)
+- [Mintlify docs](https://mintlify.com/docs)

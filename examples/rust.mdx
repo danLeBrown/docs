@@ -1,0 +1,70 @@
+---
+title: "Rust Example"
+description: "Example Rust repo using repo-owned docker-compose.preview.yml for preview-deployer"
+---
+
+This example uses **no built-in Rust template**. The orchestrator uses a **repo-owned** `docker-compose.preview.yml` (or `docker-compose.preview.yaml`) in the repository root and injects host ports for the app and db.
+
+## Repository
+
+- **Repo**: [rust-project-preview-example](https://github.com/your-org/rust-project-preview-example) — replace with your repo URL when published.
+
+## Stack
+
+- **Framework**: Rust (Axum or similar)
+- **Database**: PostgreSQL (migrations on startup)
+- **Cache**: Redis
+- **Config**: `.env` (`DATABASE_URL`, `REDIS_URL`)
+- **Health**: `GET /health`, `GET /ready` (DB + Redis), `GET /ping`, `GET /stats`
+- **Migrations and seeder**: Run on app startup
+
+## Key files
+
+### `docker-compose.preview.yml` (repository root) — required
+
+For Rust there is no built-in template, so you must provide a preview compose file. Use service names `app` and `db`; do **not** set host ports—the orchestrator injects them.
+
+Example structure (adjust build and env to match your repo):
+
+```yaml
+services:
+  app:
+    build: .
+    ports: []   # Orchestrator injects host port
+    environment:
+      - DATABASE_URL=postgres://preview:preview@db:5432/pr_${PR_NUMBER}
+      - REDIS_URL=redis://redis:6379/
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: preview
+      POSTGRES_PASSWORD: preview
+      POSTGRES_DB: pr_${PR_NUMBER}
+  redis:
+    image: redis:7-alpine
+```
+
+The orchestrator writes `docker-compose.preview.generated.yml` with injected ports and runs `docker compose` against it.
+
+### `preview-config.yml` (optional)
+
+You can add `preview-config.yml` for:
+
+- `health_check_path`: e.g. `/health` or `/ready`
+- `build_commands`: e.g. `cp .env.example .env`
+- `env`: extra env vars
+
+There is no `framework: rust`; the presence of `docker-compose.preview.yml` tells the orchestrator to use your compose file.
+
+## Local run and API
+
+See the repo README for:
+
+- `cp .env.example .env`, set `DATABASE_URL` and `REDIS_URL`
+- `createdb preview_example`, `cargo run`
+- App listens on `http://0.0.0.0:8080`
+
+Endpoints: `/health`, `/ready`, `/ping`, `/stats`. Port and routing are handled by the orchestrator when using the injected compose.

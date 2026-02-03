@@ -1,0 +1,52 @@
+---
+title: "Examples Overview"
+description: "Example repositories showing how to add preview-config and optional docker-compose.preview for preview-deployer"
+---
+
+Preview-deployer creates per-PR environments for your backend. These example repositories show how to add `preview-config.yml`, optional `docker-compose.preview.yml` (or `.yaml`), and health checks so your app works with the orchestrator.
+
+## Supported vs custom compose
+
+| Type | Frameworks | How it works |
+|------|------------|--------------|
+| **Supported** | NestJS, Laravel, Go | Orchestrator has built-in Docker Compose templates. You add `preview-config.yml`; the orchestrator generates `docker-compose.preview.yml` and optionally injects a default Dockerfile if your repo has none. |
+| **Custom compose** | Python, Rust, any | No built-in template. You add a **repo-owned** `docker-compose.preview.yml` (or `.yaml`) in the repo root. The orchestrator uses it and injects host ports for app/db. You can still add `preview-config.yml` for health path, env, build/startup commands. |
+
+## Example repositories
+
+<CardGroup cols={2}>
+  <Card title="NestJS example" icon="code" href="/examples/nestjs">
+    PostgreSQL, Redis, health/stats/admins. **Supported** framework (built-in template).
+  </Card>
+  <Card title="Laravel example" icon="code" href="/examples/laravel">
+    Laravel, PostgreSQL, Redis, `.env`. **Supported** framework (built-in template).
+  </Card>
+  <Card title="Go example" icon="code" href="/examples/go">
+    Go, PostgreSQL, Redis. **Supported** framework (built-in template).
+  </Card>
+  <Card title="Python example" icon="code" href="/examples/python">
+    FastAPI, Postgres, Redis. **Custom compose** — repo-owned `docker-compose.preview.yml`.
+  </Card>
+  <Card title="Rust example" icon="code" href="/examples/rust">
+    Rust API, Postgres, Redis. **Custom compose** — repo-owned `docker-compose.preview.yml`.
+  </Card>
+</CardGroup>
+
+## What to add in your repo
+
+1. **`preview-config.yml`** (repository root)  
+   - `framework`: `nestjs` \| `go` \| `laravel` (for supported frameworks).  
+   - `database`: `postgres` \| `mysql` \| `mongodb`.  
+   - `health_check_path`: path the orchestrator will poll (e.g. `/health`).  
+   - Optional: `build_commands`, `startup_commands`, `extra_services` (e.g. `redis`), `env`, `dockerfile`.
+
+2. **`docker-compose.preview.yml` or `docker-compose.preview.yaml`** (optional for supported; **required** for Python/Rust)  
+   - For NestJS/Laravel/Go you can omit it and use the generated compose.  
+   - For Python/Rust (or any stack without a template), put a compose file with `app` and `db` services; do not set host ports—the orchestrator injects them.
+
+3. **Health endpoint**  
+   - Your app must expose the path you set in `health_check_path` and return 200 when ready.
+
+<Info>
+  If example repos are private or not yet published, replace repo URLs in the subpages with your own; the structure and key files are the same.
+</Info>

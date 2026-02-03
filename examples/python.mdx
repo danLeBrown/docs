@@ -1,0 +1,73 @@
+---
+title: "Python Example"
+description: "Example Python (FastAPI) repo using repo-owned docker-compose.preview.yml for preview-deployer"
+---
+
+This example uses **no built-in Python template**. The orchestrator uses a **repo-owned** `docker-compose.preview.yml` (or `docker-compose.preview.yaml`) in the repository root and injects host ports for the app and db so nginx can route correctly.
+
+## Repository
+
+- **Repo**: [python-project-preview-example](https://github.com/your-org/python-project-preview-example) — replace with your repo URL when published.
+
+## Stack
+
+- **Framework**: FastAPI (Python)
+- **Database**: PostgreSQL (async, SQLAlchemy)
+- **Cache**: Redis
+- **Config**: `.env` (`DATABASE_URL`, `REDIS_URL`)
+- **Health**: `GET /health` (DB + Redis status)
+- **Endpoints**: `GET /`, `GET /docs`, `GET /items`, `GET /admins`, etc.
+- **Seeder**: `python -m scripts.seed_admin` (optional, run separately or in startup)
+
+## Key files
+
+### `docker-compose.preview.yml` (repository root) — required
+
+For Python there is no built-in template, so you must provide a preview compose file. Use service names `app` and `db`; do **not** set host ports—the orchestrator injects them.
+
+Example structure (adjust image/build and env to match your repo):
+
+```yaml
+services:
+  app:
+    build: .
+    ports: []   # Orchestrator injects host port
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://preview:preview@db:5432/pr_${PR_NUMBER}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:16-alpine
+    # No host ports; orchestrator injects
+    environment:
+      POSTGRES_USER: preview
+      POSTGRES_PASSWORD: preview
+      POSTGRES_DB: pr_${PR_NUMBER}
+  redis:
+    image: redis:7-alpine
+```
+
+The orchestrator writes `docker-compose.preview.generated.yml` with the injected ports and runs `docker compose` against that file.
+
+### `preview-config.yml` (optional)
+
+You can still add `preview-config.yml` for:
+
+- `health_check_path`: e.g. `/health`
+- `build_commands`: e.g. `cp .env.example .env`
+- `startup_commands`: e.g. `python -m scripts.seed_admin`
+- `env`: extra env vars
+
+There is no `framework: python`; the presence of `docker-compose.preview.yml` tells the orchestrator to use your compose file.
+
+## Local run and API
+
+See the repo README for:
+
+- Venv, `pip install -r requirements.txt`
+- `DATABASE_URL`, `REDIS_URL` in `.env`
+- `python -m scripts.seed_admin`, `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+
+Endpoints: `/health`, `/docs`, `/items`, `/admins`, etc.

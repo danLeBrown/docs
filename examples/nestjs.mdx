@@ -1,0 +1,52 @@
+---
+title: "NestJS Example"
+description: "Example NestJS repo with PostgreSQL, Redis, health endpoints, and admin seeder for preview-deployer"
+---
+
+This example uses the **supported** NestJS framework. The orchestrator has a built-in template; you add `preview-config.yml` and optionally a custom Dockerfile.
+
+## Repository
+
+- **Repo**: [nestjs-project-preview-example](https://github.com/your-org/nestjs-project-preview-example) — replace with your repo URL when published.
+
+## Stack
+
+- **Framework**: NestJS (Node.js)
+- **Database**: PostgreSQL
+- **Cache**: Redis
+- **Config**: Env-based (e.g. `DATABASE_URL`, `REDIS_URL`)
+- **Health**: `GET /health` (DB + Redis), `GET /health/live`, `GET /health/ready`
+- **Endpoints**: `GET /`, `GET /stats`, `GET /admins`, `GET /admins/count`
+- **Admin seeder**: Runs on startup; creates default admin from `ADMIN_EMAIL` / `ADMIN_PASSWORD` if none exists
+
+## Key files
+
+### `preview-config.yml` (repository root)
+
+```yaml
+framework: nestjs
+database: postgres
+health_check_path: /health
+extra_services:
+  - redis
+# Optional: startup_commands for migrations/seeding
+# startup_commands:
+#   - npm run migration:run
+#   - npm run seed
+```
+
+The orchestrator generates `docker-compose.preview.yml` from the NestJS template and wires the app to Postgres and Redis (e.g. `REDIS_URL=redis://redis:6379`). If the repo has no Dockerfile, a default NestJS Dockerfile can be injected from templates.
+
+### Optional: custom `docker-compose.preview.yml`
+
+If you need custom services or overrides, you can add `docker-compose.preview.yml` (or `.yaml`) in the repo root. The orchestrator will use it and inject host ports for `app` and `db`. For a standard NestJS + Postgres + Redis setup, the built-in template is usually enough.
+
+## Local run and API
+
+See the repo README for:
+
+- Prerequisites (Node.js 18+, PostgreSQL, Redis)
+- `pnpm install`, `pnpm run start` / `start:dev` / `start:prod`
+- Unit and e2e tests
+
+Main endpoints: `/health`, `/stats`, `/admins`, `/admins/count`.

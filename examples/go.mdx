@@ -1,0 +1,48 @@
+---
+title: "Go Example"
+description: "Example Go repo with PostgreSQL and Redis for preview-deployer"
+---
+
+This example uses the **supported** Go framework. The orchestrator has a built-in template; you add `preview-config.yml` and the app is built and run in a container.
+
+## Repository
+
+- **Repo**: [go-project-preview-example](https://github.com/your-org/go-project-preview-example) — replace with your repo URL when published.
+
+## Stack
+
+- **Framework**: Go (Gin)
+- **Database**: PostgreSQL
+- **Cache**: Redis
+- **Config**: `.env` (e.g. `DATABASE_URL`, `REDIS_URL`)
+- **Health**: `GET /health` (liveness), `GET /ready` (readiness with Postgres + Redis)
+- **Endpoints**: `GET /api/admins`, `GET /api/stats`
+- **Migrations**: Applied on startup; SQL in `migrations/001_init.sql`
+
+## Key files
+
+### `preview-config.yml` (repository root)
+
+```yaml
+framework: go
+database: postgres
+health_check_path: /health
+extra_services:
+  - redis
+```
+
+The orchestrator generates `docker-compose.preview.yml` from the Go template. The app container typically listens on port **8080**; the orchestrator maps it to an allocated host port and polls `health_check_path` until 200 OK.
+
+### Optional: `docker-compose.preview.yml`
+
+If you need a custom compose file (e.g. extra services), add `docker-compose.preview.yml` or `docker-compose.preview.yaml` in the repo root. Do not set host ports for `app` or `db`—the orchestrator injects them.
+
+## Local run and API
+
+See the repo README for:
+
+- `cp .env.example .env`, `docker compose up -d` for Postgres/Redis
+- `go run ./cmd/server`
+- Default port 8080; migrations and admin seed on startup
+
+Endpoints: `/health`, `/ready`, `/api/admins`, `/api/stats`.

@@ -1,97 +1,49 @@
 ---
 title: "Introduction"
-description: "Welcome to the new home for your documentation"
+description: "Automated preview deployment for backend applications—isolated environments per PR on Digital Ocean"
 ---
 
-## Setting up
+Preview Deployer creates **isolated preview environments** for backend applications when you open GitHub pull requests. Each PR gets its own Docker containers (app + database), path-based routing via nginx, and automatic cleanup when the PR closes or after a configurable TTL—similar to how Vercel or Netlify work for frontend apps.
 
-Get your documentation site up and running in minutes.
+## What you get
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+- **Automatic previews**: Open a PR and get a live URL in 2–3 minutes
+- **Database isolation**: Each preview has its own PostgreSQL (or MySQL/MongoDB) instance
+- **Supported frameworks**: NestJS, Go, and Laravel with built-in templates; Python and Rust via repo-owned `docker-compose.preview.yml`
+- **Infrastructure as Code**: Terraform provisions the droplet; Ansible configures Docker, nginx, and the orchestrator
+- **CLI**: `preview init`, `preview setup`, `preview status`, `preview destroy`
 
-## Make it yours
+## Quick links
 
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get preview-deployer up and running in minutes—prerequisites, tokens, and first PR.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Repository config, CLI config, env vars, and framework options.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Architecture" icon="diagram-project" href="/architecture">
+    System design, components, data flow, and security.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Examples" icon="code" href="/examples">
+    NestJS, Laravel, Go, Python, and Rust example repos and key files.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Next steps
 
-Everything you need to create world-class documentation.
+<Steps>
+  <Step title="Run the Quickstart">
+    Follow the [Quickstart](/quickstart) to install the CLI, get tokens, and run `preview setup`.
+  </Step>
+  <Step title="Add preview-config to your repo">
+    Add a `preview-config.yml` (and optional `docker-compose.preview.yml`) to your repository root. See [Configuration](/configuration) and [Examples](/examples).
+  </Step>
+  <Step title="Open a PR">
+    Create a branch, push, and open a PR. The orchestrator will build and comment with the preview URL.
+  </Step>
+</Steps>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Info>
+  Example backends (NestJS, Laravel, Go, Python, Rust) are documented under **Examples** with repo links and key files.
+</Info>

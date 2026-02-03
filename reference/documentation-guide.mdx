@@ -1,0 +1,54 @@
+---
+title: "Documentation Guide"
+description: "Rules and standards for generating and maintaining Preview Deployer documentation"
+---
+
+This guide is the single source of rules and standards for generating and maintaining the documentation. Anyone (humans or AI) contributing to the docs should follow it.
+
+## Overview
+
+- **Site**: Mintlify. Content is MDX; navigation is defined in `docs.json`.
+- **Coverage**: All existing docs (quickstart, configuration, architecture, testing, troubleshooting, orchestrator-how-it-works, implementation-plan, agent-handoff-prompt) are represented. New content must be added to the nav in `docs.json`.
+
+## Structure
+
+- **Root-level pages**: quickstart, configuration, architecture, testing, troubleshooting (user-facing).
+- **examples/**: index + one page per example repo (NestJS, Laravel, Go, Python, Rust). New example repos get a new page and an entry in the Examples nav.
+- **reference/**: Contributor/agent-focused content: orchestrator-how-it-works, implementation-plan, agent-handoff-prompt, and this documentation guide. New reference pages go under `reference/` and are added to the Reference nav in `docs.json`.
+- **New guides**: Add at root or under a new group in `docs.json` as appropriate.
+
+## Examples section standards
+
+- **One page per example repo.** Include: repo name and link, framework/stack, **supported** (NestJS, Laravel, Go — built-in templates) vs **custom compose** (Python, Rust — repo-owned `docker-compose.preview.yml`).
+- **Key files**: `preview-config.yml`, optional `docker-compose.preview.yml` or `.yaml`. Use code blocks for config snippets; link to repo README for local run and endpoints.
+- **Placeholder URLs**: When repos are private or not yet published, use placeholder URLs and document "Replace with your repo URL" until public.
+
+## Reference section
+
+- **Audience**: Contributors and AI agents. Keep tone and audience clear.
+- **Content**: Orchestrator internals, implementation plan, agent handoff prompt, and this documentation guide.
+
+## Internal links
+
+- Use Mintlify paths (e.g. `/configuration`, `/examples/nestjs`, `/reference/implementation-plan`). Do not use `.md` or `.mdx` file paths.
+- When moving or renaming pages, update internal links and `docs.json` navigation.
+
+## MDX and frontmatter
+
+- Migrate from `.md` to `.mdx` when adding or editing pages.
+- **Frontmatter**: Every page must have a YAML frontmatter block with `title` and `description`. Follow the Mintlify and technical writing rules in this repo's `.cursor/rules.md`.
+- **Mermaid**: Supported; reuse diagrams from architecture and orchestrator-how-it-works where useful.
+- **Optional**: Meta block for SEO/sidebar; use Mintlify components (Card, Steps, Note, Warning, etc.) per the docs repo rules.
+
+## llm.txt
+
+- **Location**: `llm.txt` in the docs repo root (or as specified in the project). It provides a plain-language "map" of the project and doc site for AI tools.
+- **When to update**: When adding new sections, new example repos, or restructuring the docs. Keep it in sync so AI context stays accurate. Mention this in contributions so contributors know to update it.
+
+## When to update
+
+- **New doc page**: Create the page, add it to `docs.json` nav, and update `llm.txt` if the site map changes.
+- **New example repo**: Add a page under `examples/`, add to Examples nav, update examples index, and update `llm.txt`.
+- **New nav group**: Add the group and pages in `docs.json`; update `llm.txt` if the high-level structure changes.
+
+This guide lives in the docs so it can be updated as practices evolve and ensures consistent, discoverable rules for generating documentation.

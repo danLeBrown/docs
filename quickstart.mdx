@@ -1,80 +1,199 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Get preview-deployer up and running in minutes"
 ---
 
-## Get started in three steps
+Get preview-deployer up and running in minutes.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+Before you begin, ensure you have:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+1. **Digital Ocean Account**: Sign up at [digitalocean.com](https://www.digitalocean.com)
+2. **GitHub Account**: With access to repositories you want to enable
+3. **Node.js**: Version 20 or higher ([download](https://nodejs.org))
+4. **pnpm**: Package manager ([install](https://pnpm.io/installation))
+5. **Terraform**: Version 1.5 or higher ([install](https://www.terraform.io/downloads))
+6. **Ansible**: Version 2.14 or higher ([install](https://docs.ansible.com/ansible/latest/installation_guide/index.html))
+7. **SSH Key**: For accessing the Digital Ocean droplet
 
-### Step 2: Deploy your changes
+## Step 1: Install preview-deployer
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+Clone the repository and install dependencies:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+```bash
+git clone https://github.com/your-org/preview-deployer.git
+cd preview-deployer
+pnpm install
+pnpm build
+```
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## Step 2: Get Required Tokens
 
-### Step 3: Go live
+### Digital Ocean API Token
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+1. Go to [Digital Ocean API Tokens](https://cloud.digitalocean.com/account/api/tokens)
+2. Click "Generate New Token"
+3. Give it a name (e.g., "preview-deployer")
+4. Select "Write" scope
+5. Copy the token (you won't see it again!)
 
-## Next steps
+### GitHub Personal Access Token
 
-Now that you have your docs running, explore these key features:
+1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Give it a name (e.g., "preview-deployer")
+4. Select scopes:
+   - `repo` (Full control of private repositories)
+   - `admin:repo_hook` (Full control of repository hooks)
+5. Generate and copy the token
 
-<CardGroup cols={2}>
+## Step 3: Initialize Configuration
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+Run the init command:
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+```bash
+pnpm --filter cli run build
+preview init
+```
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+You'll be prompted for:
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+- Digital Ocean API token
+- Digital Ocean region (default: nyc3)
+- Droplet size (default: s-2vcpu-4gb)
+- GitHub personal access token
+- GitHub repositories (comma-separated, format: owner/repo)
+- Cleanup TTL in days (default: 7)
+- Max concurrent previews (default: 10)
 
-</CardGroup>
+Configuration is saved to `~/.preview-deployer/config.yml`. Sensitive values are stored in your OS keychain.
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## Step 4: Prepare Your Repository
+
+Add a `preview-config.yml` file to your repository root:
+
+```yaml
+framework: nestjs # or 'go'
+database: postgres
+health_check_path: /health
+```
+
+See [Configuration Reference](/configuration) for all options.
+
+Ensure your application has a health check endpoint at the specified path.
+
+## Step 5: Set Up Infrastructure
+
+Run the setup command:
+
+```bash
+preview setup
+```
+
+This will:
+
+1. Provision a Digital Ocean droplet
+2. Configure the server with Docker, nginx, and the orchestrator
+3. Create GitHub webhooks for your repositories
+
+You'll be prompted for:
+
+- SSH public key (for droplet access)
+- Confirmation to create infrastructure
+
+The setup process takes about 5–10 minutes.
+
+## Step 6: Test It Out
+
+1. Create a new branch in your repository
+2. Make some changes
+3. Open a pull request
+4. Wait 2–3 minutes for the preview to deploy
+5. Check the PR comments for the preview URL
+
+The preview URL will be in the format: `http://YOUR_SERVER_IP/{projectSlug}/pr-{PR_NUMBER}/` (e.g. `http://YOUR_SERVER_IP/myorg-myapp/pr-12/`).
+
+## Step 7: Verify Deployment
+
+Check the status:
+
+```bash
+preview status
+```
+
+This shows:
+
+- Infrastructure status
+- Orchestrator health
+- Active preview deployments
+
+## Troubleshooting
+
+If something goes wrong:
+
+1. Check the orchestrator logs:
+
+   ```bash
+   ssh root@YOUR_SERVER_IP
+   journalctl -u preview-deployer-orchestrator -f
+   ```
+
+2. Check Docker containers:
+
+   ```bash
+   ssh root@YOUR_SERVER_IP
+   docker ps -a
+   docker logs {projectSlug}-pr-123-app  # Replace with your project slug and PR number
+   ```
+
+3. Check nginx configuration:
+   ```bash
+   ssh root@YOUR_SERVER_IP
+   nginx -t
+   cat /etc/nginx/preview-configs/{projectSlug}-pr-123.conf
+   ```
+
+See [Troubleshooting Guide](/troubleshooting) for more help.
+
+## Next Steps
+
+- Read the [Architecture Documentation](/architecture) to understand how it works
+- Customize your [Configuration](/configuration)
+- Set up monitoring and alerts
+- Configure custom domains (future feature)
+
+## Cost Estimation
+
+Default setup costs approximately:
+
+- Digital Ocean droplet (s-2vcpu-4gb): ~$24/month
+- Reserved IP: Free
+- Firewall: Free
+- Monitoring: Free
+
+**Total: ~$24/month**
+
+You can reduce costs by:
+
+- Using a smaller droplet (s-1vcpu-2gb: ~$12/month)
+- Using a cheaper region
+- Disabling backups
+
+## Cleanup
+
+To destroy all infrastructure:
+
+```bash
+preview destroy
+```
+
+This will:
+
+1. Cleanup all preview deployments
+2. Delete GitHub webhooks
+3. Destroy the Digital Ocean droplet
+
+<Warning>
+  This is irreversible!
+</Warning>
