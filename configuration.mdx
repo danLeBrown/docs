@@ -7,19 +7,30 @@ Complete reference for all configuration options in preview-deployer.
 
 ## Repository Configuration (`preview-config.yml`)
 
-Place this file in your repository root to configure preview deployments. The orchestrator reads it **after** cloning the repo; any values you set here override defaults and auto-detection (e.g. framework is taken from this file when present, otherwise detected from the repo).
+**Required.** Place this file in your repository root. The orchestrator reads it after cloning; if the file is missing or validation fails, the deployment fails with a clear error. Required fields are validated; optional fields override defaults and auto-detection (e.g. framework is taken from this file when present, otherwise detected from the repo).
 
 ### Required Fields
 
 ```yaml
 # Framework selection (overrides auto-detection when set)
-framework: nestjs # Options: nestjs, go, laravel
+framework: nestjs # Options: nestjs, go, laravel, rust, python
 
 # Database type
 database: postgres # Options: postgres, mysql, mongodb
 
-# Health check endpoint path (used when waiting for the app to be ready)
-health_check_path: /health # Path to health check endpoint
+# Health check endpoint path (used when waiting for the app to be ready). Must start with /
+health_check_path: /health
+
+# Port the app listens on inside the container
+app_port: 3000
+
+# Environment variable name for the app port (e.g. PORT)
+app_port_env: PORT
+
+# Entrypoint for the app; used in the Dockerfile CMD. Examples by framework:
+# NestJS: dist/main.js   Go: server   Rust: ./app or ./target/release/app   Python: app.main:app
+# Laravel: value is required but unused (php artisan serve is always used)
+app_entrypoint: dist/main.js
 ```
 
 ### Optional Fields
@@ -65,7 +76,7 @@ You can provide your own Docker Compose file **strictly for preview** by placing
 
 - **File names**: `docker-compose.preview.yml` or `docker-compose.preview.yaml` (in repo root). Only these two exact filenames are accepted. If you use `.yaml`, the orchestrator renames it to `.yml` so one standard path is used everywhere.
 - **When used**: If either file exists after clone/checkout, the orchestrator parses it, injects host port mappings (see Ports), and writes `docker-compose.preview.generated.yml` in the deployment directory. That generated file is used for `docker compose up/down`. Otherwise the orchestrator generates `docker-compose.preview.yml` from templates.
-- **Ports**: Do **not** specify host ports for the `app` or `db` services in your compose file. The orchestrator injects them at runtime so each preview gets unique ports and nginx can route correctly. Use service names `app` and `db`. Container ports are inferred from framework (NestJS 3000, Go 8080, Laravel 8000) and database type (Postgres 5432, MySQL 3306, MongoDB 27017). If you omit `ports` for `app`/`db`, we add them; if you had host ports, we override them.
+- **Ports**: Do **not** specify host ports for the `app` or `db` services in your compose file. The orchestrator injects them at runtime so each preview gets unique ports and nginx can route correctly. Use service names `app` and `db`. Container ports are inferred from framework (NestJS 3000, Go 8080, Laravel 8000, Rust 8080, Python 8000) and database type (Postgres 5432, MySQL 3306, MongoDB 27017). If you omit `ports` for `app`/`db`, we add them; if you had host ports, we override them.
 - **Project name**: The orchestrator always runs with `-p <deploymentId>` (e.g. `myorg-myapp-12`). Do not rely on a fixed project name in your file.
 - **Rebuild/cleanup**: Update and cleanup use the same generated file: `docker-compose.preview.generated.yml` when you provide repo compose, otherwise `docker-compose.preview.yml` (orchestrator-generated).
 
@@ -180,16 +191,20 @@ Then set `preview_base_url` (and orchestrator env) to `https://preview.example.c
 
 ## Docker Compose Templates
 
-Templates are located in `orchestrator/templates/`:
+Templates are located under `orchestrator/templates/docker-compose/` and `orchestrator/templates/dockerfile/`:
 
-- `docker-compose.nestjs.yml.hbs`: NestJS application template
-- `docker-compose.go.yml.hbs`: Go application template
+- `docker-compose/docker-compose.nestjs.yml.hbs`: NestJS application
+- `docker-compose/docker-compose.go.yml.hbs`: Go application
+- `docker-compose/docker-compose.laravel.yml.hbs`: Laravel application
+- `docker-compose/docker-compose.rust.yml.hbs`: Rust application
+- `docker-compose/docker-compose.python.yml.hbs`: Python application
+- `dockerfile/Dockerfile.nestjs.hbs`, `Dockerfile.go.hbs`, `Dockerfile.laravel.hbs`, `Dockerfile.rust.hbs`, `Dockerfile.python.hbs`: Default Dockerfiles per framework
 
 ### Template Variables
 
 - `{{prNumber}}`: PR number
-- `{{appPort}}`: Allocated app port
-- `{{dbPort}}`: Allocated database port
+- `{{appPort}}`: Allocated app port (exposed on host)
+- `{{dbPort}}`: Allocated database port (exposed on host)
 
 ### Container Resources
 
@@ -257,9 +272,9 @@ The orchestrator will poll this endpoint until it returns 200 OK.
 
 ## Framework detection and Dockerfiles
 
-The orchestrator detects the app framework (NestJS, Go, or Laravel) from the cloned repo and uses the matching docker-compose template. **If the repo has no Dockerfile**, the orchestrator injects a default one for that framework from `orchestrator/templates/` (e.g. `Dockerfile.nestjs`, `Dockerfile.go`, `Dockerfile.laravel`). Repos can override by providing their own `Dockerfile` at the repo root.
+The orchestrator supports five frameworks: NestJS, Go, Laravel, Rust, and Python. It detects framework from the cloned repo (when not set in `preview-config.yml`) and uses the matching docker-compose template from `orchestrator/templates/docker-compose/`. **If the repo has no Dockerfile**, the orchestrator injects a default one for that framework from `orchestrator/templates/dockerfile/`. Repos can override by providing their own `Dockerfile` at the repo root.
 
-Detection order: NestJS (nest-cli.json or `@nestjs/core` in package.json) → Go (go.mod) → Laravel (`laravel/framework` in composer.json). If none match, NestJS is assumed.
+Detection order: NestJS (nest-cli.json or `@nestjs/core` in package.json) → Go (go.mod) → Laravel (`laravel/framework` in composer.json). Rust and Python are not auto-detected; set `framework: rust` or `framework: python` in `preview-config.yml`. If none match, NestJS is assumed.
 
 ## Custom Dockerfiles
 

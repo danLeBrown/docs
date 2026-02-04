@@ -51,16 +51,25 @@ services:
 
 The orchestrator writes `docker-compose.preview.generated.yml` with the injected ports and runs `docker compose` against that file.
 
-### `preview-config.yml` (optional)
+### `preview-config.yml` (repository root) — required
 
-You can still add `preview-config.yml` for:
+You must add `preview-config.yml` with all required fields. Set `framework: python` so the orchestrator knows the app port and entrypoint; when you provide `docker-compose.preview.yml`, the orchestrator still uses it for compose and uses `preview-config.yml` for validation, health check path, and optional build/startup commands.
 
-- `health_check_path`: e.g. `/health`
-- `build_commands`: e.g. `cp .env.example .env`
-- `startup_commands`: e.g. `python -m scripts.seed_admin`
-- `env`: extra env vars
-
-There is no `framework: python`; the presence of `docker-compose.preview.yml` tells the orchestrator to use your compose file.
+```yaml
+framework: python
+database: postgres
+health_check_path: /health
+app_port: 8000
+app_port_env: PORT
+app_entrypoint: app.main:app
+# Optional:
+# build_commands:
+#   - cp .env.example .env
+# startup_commands:
+#   - python -m scripts.seed_admin
+# env:
+#   - NODE_ENV=preview
+```
 
 ## Local run and API
 

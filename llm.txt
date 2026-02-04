@@ -19,6 +19,9 @@ This documentation lives in the docs.prvue.dev repo and is built with Mintlify. 
 - **Main repo**: preview-deployer (Terraform, Ansible, orchestrator, CLI). Replace "your-org" with your org when linking.
 - **Example repos**: nestjs-project-preview-example, laravel-project-preview-example, go-project-preview-example, python-project-preview-example, rust-project-preview-example. Use placeholder URLs until published; document "Replace with your repo URL" where relevant.
 
-## For AI tools
+## For AI tools and agents
 
-Use this file as a map: when adding new sections, example repos, or restructuring the docs, update llm.txt so the "map" stays accurate. See the Documentation guide (reference/documentation-guide) in the docs for full rules on contributing to the documentation.
+Use this file as a map: when adding new sections, example repos, or restructuring the docs, update llm.txt so the "map" stays accurate.
+
+- **New session in docs.prvue.dev**: Read **.cursor/agent-guide.md** first. It explains what docs.prvue.dev is, what was done to set it up, repo structure, and how to add or change content. Then use the Documentation guide (reference/documentation-guide) and .cursor/rules.md for structure and writing rules.
+- **Full contributing rules**: See the Documentation guide (reference/documentation-guide) in the docs for structure, examples/reference standards, internal links, MDX, and when to update llm.txt.

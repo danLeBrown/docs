@@ -65,7 +65,7 @@ graph TB
 
 - Receive and verify GitHub webhooks
 - Clone repositories
-- Detect framework (NestJS/Go)
+- Detect framework (NestJS, Go, Laravel, Rust, Python)
 - Generate Docker Compose files
 - Build and start containers
 - Configure nginx routing
@@ -90,6 +90,7 @@ graph TB
 - Initialize configuration
 - Run Terraform and Ansible
 - Create GitHub webhooks
+- Sync orchestrator code to server (after setup)
 - Check deployment status
 - Destroy infrastructure
 
@@ -97,6 +98,7 @@ graph TB
 
 - `init`: Create configuration file
 - `setup`: Deploy infrastructure
+- `sync`: Sync orchestrator code to server (build locally, rsync, restart). Use after setup when you change orchestrator code.
 - `status`: Check system status
 - `destroy`: Teardown infrastructure
 
@@ -108,7 +110,7 @@ graph TB
 1. PR Opened → GitHub Webhook → Orchestrator
 2. Orchestrator validates repository and webhook signature
 3. Orchestrator clones repository and checks out PR branch
-4. Framework detection (NestJS/Go)
+4. Framework detection (NestJS, Go, Laravel, Rust, Python)
 5. Generate Docker Compose file from template
 6. Allocate ports (app: 8000 + PR#, db: 9000 + PR#)
 7. Build and start containers
@@ -144,6 +146,7 @@ graph TB
 ## Port Allocation Strategy
 
 - **Global pool**: App ports start at 8000, DB ports at 9000. Each new deployment gets the next free app port and next free db port (keyed by deployment id).
+- Port allocations are tracked in the deployment store's `portAllocations` map (keyed by deployment id) and are released on cleanup so ports are reused correctly. Allocation excludes host ports currently in use by running Docker containers, so failed deployments whose containers still run do not cause port collisions.
 - Allows many deployments across multiple repos without collision.
 
 ## Routing Strategy
@@ -196,8 +199,9 @@ Deployments are tracked in a JSON file (`/opt/preview-deployer/deployments.json`
       "commitSha": "abc123...",
       "framework": "nestjs",
       "dbType": "postgres",
-      "appPort": 8000,
-      "dbPort": 9000,
+      "appPort": 3000,
+      "exposedAppPort": 8000,
+      "exposedDbPort": 9000,
       "status": "running",
       "createdAt": "2026-01-29T10:00:00Z",
       "updatedAt": "2026-01-29T10:00:00Z",
@@ -207,8 +211,8 @@ Deployments are tracked in a JSON file (`/opt/preview-deployer/deployments.json`
   },
   "portAllocations": {
     "my-org-my-app-12": {
-      "appPort": 8000,
-      "dbPort": 9000
+      "exposedAppPort": 8000,
+      "exposedDbPort": 9000
     }
   }
 }

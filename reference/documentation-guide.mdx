@@ -5,6 +5,17 @@ description: "Rules and standards for generating and maintaining Preview Deploye
 
 This guide is the single source of rules and standards for generating and maintaining the documentation. Anyone (humans or AI) contributing to the docs should follow it.
 
+## For agents and new contributors
+
+If you are an AI agent or new contributor starting a session in the **docs.prvue.dev** repo, read the **Agent guide** first: open **`.cursor/agent-guide.md`** in the repo root. It summarizes:
+
+- What docs.prvue.dev is (documentation repo for Preview Deployer)
+- What was done to set up the Mintlify site (steps, structure, two-repo split)
+- Where files live and which files to use (docs.json, llm.txt, documentation-guide, .cursor/rules.md)
+- How to add or change content and keep nav and llm.txt in sync
+
+Then use this Documentation guide for structure and writing rules, and `.cursor/rules.md` for Mintlify components and frontmatter.
+
 ## Overview
 
 - **Site**: Mintlify. Content is MDX; navigation is defined in `docs.json`.
@@ -19,7 +30,7 @@ This guide is the single source of rules and standards for generating and mainta
 
 ## Examples section standards
 
-- **One page per example repo.** Include: repo name and link, framework/stack, **supported** (NestJS, Laravel, Go — built-in templates) vs **custom compose** (Python, Rust — repo-owned `docker-compose.preview.yml`).
+- **One page per example repo.** Include: repo name and link, framework/stack. All five (NestJS, Laravel, Go, Rust, Python) are **supported** with built-in templates; **custom compose** (repo-owned `docker-compose.preview.yml`) is for other stacks or when you need custom services.
 - **Key files**: `preview-config.yml`, optional `docker-compose.preview.yml` or `.yaml`. Use code blocks for config snippets; link to repo README for local run and endpoints.
 - **Placeholder URLs**: When repos are private or not yet published, use placeholder URLs and document "Replace with your repo URL" until public.
 

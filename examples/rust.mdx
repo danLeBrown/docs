@@ -49,15 +49,24 @@ services:
 
 The orchestrator writes `docker-compose.preview.generated.yml` with injected ports and runs `docker compose` against it.
 
-### `preview-config.yml` (optional)
+### `preview-config.yml` (repository root) — required
 
-You can add `preview-config.yml` for:
+You must add `preview-config.yml` with all required fields. Set `framework: rust` so the orchestrator knows the app port and entrypoint; when you provide `docker-compose.preview.yml`, the orchestrator still uses it for compose and uses `preview-config.yml` for validation, health check path, and optional build/startup commands.
 
-- `health_check_path`: e.g. `/health` or `/ready`
-- `build_commands`: e.g. `cp .env.example .env`
-- `env`: extra env vars
-
-There is no `framework: rust`; the presence of `docker-compose.preview.yml` tells the orchestrator to use your compose file.
+```yaml
+framework: rust
+database: postgres
+health_check_path: /health
+app_port: 8080
+app_port_env: PORT
+app_entrypoint: ./app
+# Or ./target/release/app for release builds
+# Optional:
+# build_commands:
+#   - cp .env.example .env
+# env:
+#   - RUST_LOG=info
+```
 
 ## Local run and API
 

@@ -27,6 +27,9 @@ This example uses the **supported** Go framework. The orchestrator has a built-i
 framework: go
 database: postgres
 health_check_path: /health
+app_port: 8080
+app_port_env: PORT
+app_entrypoint: ./server
 extra_services:
   - redis
 ```

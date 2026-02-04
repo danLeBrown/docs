@@ -27,6 +27,9 @@ This example uses the **supported** NestJS framework. The orchestrator has a bui
 framework: nestjs
 database: postgres
 health_check_path: /health
+app_port: 3000
+app_port_env: PORT
+app_entrypoint: dist/main.js
 extra_services:
   - redis
 # Optional: startup_commands for migrations/seeding

@@ -1,6 +1,6 @@
 # Preview Deployer Documentation
 
-This repository contains the official documentation for [Preview Deployer](https://github.com/your-org/preview-deployer)—automated preview deployment for backend applications on GitHub PRs. The site is built with [Mintlify](https://mintlify.com) and published at **docs.prvue.dev**.
+This repository contains the official documentation for [Preview Deployer](https://github.com/danLeBrown/preview-deployer)—automated preview deployment for backend applications on GitHub PRs. The site is built with [Mintlify](https://mintlify.com) and published at **docs.prvue.dev**.
 
 ## Contents
 
@@ -34,5 +34,5 @@ Deployments are typically triggered by your host (e.g. Mintlify dashboard, or CI
 
 ## Resources
 
-- [Preview Deployer repo](https://github.com/your-org/preview-deployer)
+- [Preview Deployer repo](https://github.com/danLeBrown/preview-deployer)
 - [Mintlify docs](https://mintlify.com/docs)

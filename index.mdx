@@ -9,9 +9,9 @@ Preview Deployer creates **isolated preview environments** for backend applicati
 
 - **Automatic previews**: Open a PR and get a live URL in 2–3 minutes
 - **Database isolation**: Each preview has its own PostgreSQL (or MySQL/MongoDB) instance
-- **Supported frameworks**: NestJS, Go, and Laravel with built-in templates; Python and Rust via repo-owned `docker-compose.preview.yml`
+- **Supported frameworks**: NestJS, Go, Laravel, Rust, and Python with built-in templates (or use repo-owned `docker-compose.preview.yml` for custom needs)
 - **Infrastructure as Code**: Terraform provisions the droplet; Ansible configures Docker, nginx, and the orchestrator
-- **CLI**: `preview init`, `preview setup`, `preview status`, `preview destroy`
+- **CLI**: `preview init`, `preview setup`, `preview sync`, `preview status`, `preview destroy`
 
 ## Quick links
 

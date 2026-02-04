@@ -22,7 +22,7 @@ Before you begin, ensure you have:
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-org/preview-deployer.git
+git clone https://github.com/danLeBrown/preview-deployer.git
 cd preview-deployer
 pnpm install
 pnpm build
@@ -74,12 +74,15 @@ Configuration is saved to `~/.preview-deployer/config.yml`. Sensitive values are
 Add a `preview-config.yml` file to your repository root:
 
 ```yaml
-framework: nestjs # or 'go'
+framework: nestjs # or go, laravel, rust, python
 database: postgres
 health_check_path: /health
+app_port: 3000
+app_port_env: PORT
+app_entrypoint: dist/main.js  # NestJS example; value is framework-dependent
 ```
 
-See [Configuration Reference](/configuration) for all options.
+See [Configuration Reference](/configuration) for all options. The `app_entrypoint` value depends on your framework (e.g. Go: `server`, Python: `app.main:app`).
 
 Ensure your application has a health check endpoint at the specified path.
 
@@ -127,6 +130,16 @@ This shows:
 - Infrastructure status
 - Orchestrator health
 - Active preview deployments
+
+## Updating the orchestrator
+
+If you change orchestrator code in the preview-deployer repo (e.g. after pulling changes or editing the TypeScript), run:
+
+```bash
+preview sync
+```
+
+This builds the orchestrator locally, rsyncs it to the server, and restarts the orchestrator service. Use it after initial setup whenever you want to deploy orchestrator changes without re-running `preview setup`.
 
 ## Troubleshooting
 

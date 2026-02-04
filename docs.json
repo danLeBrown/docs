@@ -66,11 +66,17 @@
     "dark": "/logo/dark.svg"
   },
   "navbar": {
-    "links": [],
+    "links": [
+      {
+        "label": "Suggest a change",
+        "href": "https://github.com/danLeBrown/docs.prvue.dev",
+        "icon": "pen-to-square"
+      }
+    ],
     "primary": {
       "type": "button",
       "label": "GitHub",
-      "href": "https://github.com/your-org/preview-deployer"
+      "href": "https://github.com/danLeBrown/preview-deployer"
     }
   },
   "contextual": {

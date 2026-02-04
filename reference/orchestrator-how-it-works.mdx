@@ -80,27 +80,29 @@ flowchart LR
 
 When the webhook payload has `action: opened` or `reopened`, the orchestrator runs a **deploy** flow. When `action: synchronize`, it runs an **update** flow (same host, rebuild/restart). Containers are **one set per PR** (app + DB), not shared.
 
+**Required config:** The repo must have `preview-config.yml` at the root with all required fields: `framework`, `database`, `health_check_path`, `app_port`, `app_port_env`, `app_entrypoint`. Missing or invalid config fails the deployment. See [Configuration Reference](/configuration).
+
 ### Deploy flow (new PR)
 
 ```mermaid
 flowchart TB
     A[handleDeploy] --> B[Post 'building' comment to PR]
-    B --> C[Tracker.allocatePorts: app 8000+pr, db 9000+pr]
+    B --> C[Tracker.allocatePorts: app 8000+, db 9000+]
     C --> D[Create work dir: deployments/pr-N]
     D --> E[git clone + checkout branch + reset to commitSha]
-    E --> F[Detect framework: NestJS or Go]
-    F --> G[Generate docker-compose.preview.yml from template]
+    E --> F[Load and validate preview-config.yml]
+    F --> G[Generate or use repo docker-compose.preview.yml]
     G --> H[docker compose up -d --build]
-    H --> I[Wait for /health on app port]
+    H --> I[Wait for health_check_path on app port]
     I --> J[NginxManager.addPreview: write pr-N.conf, reload nginx]
     J --> K[Tracker.saveDeployment]
     K --> L[Update PR comment with preview URL]
 ```
 
-- **Ports:** App = `8000 + prNumber`, DB = `9000 + prNumber` (see [Implementation plan](/reference/implementation-plan)).
-- **Work dir:** `/opt/preview-deployments/pr-<number>/` (or `DEPLOYMENTS_DIR`); clone lives there, and `docker compose` runs in that directory.
-- **Compose file:** Generated from Handlebars templates (`docker-compose.nestjs.yml.hbs` or `docker-compose.go.yml.hbs`) with `prNumber`, `appPort`, `dbPort`.
-- **Health:** Orchestrator polls `http://localhost:<appPort>/health` (e.g. every 5s, up to 60s) before marking the preview as up and updating the PR comment.
+- **Ports:** Allocated from global pool (app from 8000, db from 9000); stored in `portAllocations` and released on cleanup (see [Implementation plan](/reference/implementation-plan)).
+- **Work dir:** `/opt/preview-deployments/<projectSlug>/pr-<number>/` (or `DEPLOYMENTS_DIR`); clone lives there, and `docker compose` runs in that directory.
+- **Compose file:** Generated from Handlebars templates per framework (NestJS, Go, Laravel, Rust, Python) or from repo-owned `docker-compose.preview.yml`; uses `app_port`, `app_port_env`, `app_entrypoint` from `preview-config.yml`.
+- **Health:** Orchestrator polls `http://localhost:<exposedAppPort><health_check_path>` (e.g. every 5s, up to 60s) before marking the preview as up and updating the PR comment.
 
 ### Container layout per PR
 
