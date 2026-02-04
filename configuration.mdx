@@ -52,12 +52,9 @@ env:
   - DEBUG=true
   - API_KEY=value
 
-# Optional: Env file(s) relative to repo root (e.g. .env from build_commands). Loaded by Compose at runtime.
+# Optional: Env file path (single string) relative to repo root. Compose loads this file into the app container at runtime.
 # Use with build_commands: [cp .env.example .env] so the file exists before docker compose up.
 # env_file: .env
-# env_file:
-#   - .env
-#   - .env.preview
 
 # Commands run inside the app container before the main process (migrations, seeding, etc.).
 # Runs in order; non-zero exit fails the container. Then the app starts as usual.
@@ -105,7 +102,7 @@ orchestrator:
 
 ### Orchestrator Service
 
-Set in Ansible or systemd service file:
+Set in Ansible or systemd service file. When running locally (e.g. for development), the orchestrator loads a `.env` file from its working directory if present, so you can keep secrets out of the shell.
 
 ```bash
 # GitHub Configuration
@@ -127,9 +124,22 @@ DEPLOYMENTS_DIR=/opt/preview-deployments
 NGINX_CONFIG_DIR=/etc/nginx/preview-configs
 DEPLOYMENTS_DB=/opt/preview-deployer/deployments.json
 
-# Logging
+# Logging (orchestrator uses pino)
 LOG_LEVEL=info  # Options: debug, info, warn, error
+
+# Optional: Base URL for OpenAPI spec servers[].url. Defaults to PREVIEW_BASE_URL when unset.
+# Set to the public URL of the orchestrator (e.g. https://preview.example.com) when your doc site or Swagger UI should reference it.
+# ORCHESTRATOR_PUBLIC_URL=https://preview.example.com
 ```
+
+### API reference (OpenAPI)
+
+The orchestrator exposes OpenAPI 3.0 documentation so you can generate API references (e.g. for a separate doc site) or explore the API interactively.
+
+- **OpenAPI JSON**: `GET /openapi.json` — Returns the OpenAPI 3.0 spec. Your doc site or API tooling can fetch this URL (from the orchestrator host, e.g. `http://SERVER_IP:3000/openapi.json`) to generate the API reference.
+- **Swagger UI**: `GET /api-docs` — Serves Swagger UI that loads the same spec, for interactive exploration (similar to NestJS's default docs page).
+
+The spec's `servers[].url` is set from `ORCHESTRATOR_PUBLIC_URL` if present, otherwise from `PREVIEW_BASE_URL`. If neither is set, the spec omits `servers` and clients can use the request host as the base URL.
 
 ## Terraform Variables
 
@@ -176,6 +186,7 @@ server_ip: 1.2.3.4
 preview_base_url: http://1.2.3.4
 cleanup_ttl_days: 7
 max_concurrent_previews: 10
+orchestrator_log_level: info # optional; options: debug, info, warn, error
 ```
 
 ### Optional SSL (Let's Encrypt)
@@ -359,17 +370,23 @@ Webhooks are automatically created by the CLI. Manual configuration:
 
 ### Orchestrator Logs
 
+The orchestrator uses **pino** and writes to stdout/stderr. In production, the systemd unit redirects stdout to `.../logs/orchestrator.log` and stderr to `.../logs/orchestrator-error.log`.
+
 Location: `/opt/preview-deployer/logs/`
 
-- `orchestrator.log`: Application logs
-- `orchestrator-error.log`: Error logs
+- `orchestrator.log`: Application logs (stdout)
+- `orchestrator-error.log`: Error logs (stderr)
 
-View logs:
+View logs (primary: tail the log files):
 
 ```bash
 ssh root@YOUR_SERVER_IP
-journalctl -u preview-deployer-orchestrator -f
+tail -f /opt/preview-deployer/logs/orchestrator.log
+# Errors:
+tail -f /opt/preview-deployer/logs/orchestrator-error.log
 ```
+
+Alternatively, use `journalctl -u preview-deployer-orchestrator -f` for the service unit output.
 
 ### Docker Logs
 

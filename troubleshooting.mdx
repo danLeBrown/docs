@@ -370,7 +370,13 @@ Common issues and solutions for preview-deployer.
 
 ### Enable Debug Logging
 
-Set `LOG_LEVEL=debug` in orchestrator environment:
+Set `LOG_LEVEL=debug` in the orchestrator environment (or set Ansible variable `orchestrator_log_level: debug`). Debug lines then appear in the same file as info logs: `/opt/preview-deployer/logs/orchestrator.log`. View them with:
+
+```bash
+tail -f /opt/preview-deployer/logs/orchestrator.log
+```
+
+To set via systemd override:
 
 ```bash
 ssh root@SERVER_IP
@@ -395,7 +401,8 @@ nginx -t
 
 # Orchestrator
 systemctl status preview-deployer-orchestrator
-journalctl -u preview-deployer-orchestrator -n 50
+tail -n 50 /opt/preview-deployer/logs/orchestrator.log
+# Or: journalctl -u preview-deployer-orchestrator -n 50
 ```
 
 ### Manual Testing

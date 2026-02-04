@@ -7,6 +7,8 @@ The orchestrator is an Express service that listens on **ORCHESTRATOR_PORT** (de
 
 **Base URL**: `http://localhost:3000` (on the server) or `http://SERVER_IP:3000` if the port is forwarded. Replace `SERVER_IP` with your droplet IP when running `curl` from your machine (only if port 3000 is reachable; by default it is internal).
 
+**OpenAPI / Swagger UI**: The API spec is available at `GET /openapi.json` and interactive docs at `GET /api-docs` for exploration (e.g. `http://localhost:3000/openapi.json`, `http://localhost:3000/api-docs`).
+
 ## Endpoints
 
 ### GET /health

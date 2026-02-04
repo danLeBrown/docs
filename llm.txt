@@ -9,7 +9,7 @@ This documentation lives in the docs.prvue.dev repo and is built with Mintlify. 
 ## Main sections
 
 - **Getting Started**: Introduction (index), Quickstart (prerequisites, tokens, init, setup, first PR).
-- **Guides** (tab): Getting Started, Configuration, Architecture, Examples, Operations, Reference. Configuration reference (preview-config.yml, CLI config, env vars, Terraform/Ansible), Architecture (components, data flow, security, deployment tracking).
+- **Guides** (tab): Getting Started, Configuration, Architecture, Examples, Operations, Reference. Configuration reference (preview-config.yml, CLI config, env vars including orchestrator env loading and OpenAPI, Terraform/Ansible, logging with pino and log file paths), Architecture (components, data flow, security, deployment tracking).
 - **API reference** (tab): OpenAPI-generated pages for the orchestrator API (health, webhook, list/delete previews); spec in `openapi.json`. Same level as Guides tab (see [Mintlify starter](https://github.com/mintlify/starter)).
 - **Examples**: Overview of supported vs custom-compose setups; one page per example repo: NestJS, Laravel, Go (supported frameworks with built-in templates), Python, Rust (repo-owned docker-compose.preview.yml).
 - **Operations**: Testing (Jest, unit/integration/E2E, guidelines), Troubleshooting (setup, deployment, runtime, security issues).
