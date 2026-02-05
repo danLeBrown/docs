@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Preview Deployer Orchestrator API",
+    "title": "Prvue Orchestrator API",
     "version": "0.1.0",
     "description": "API for the preview deployer orchestrator: health checks, GitHub webhook, and preview lifecycle (list/delete)."
   },

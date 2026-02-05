@@ -1,9 +1,9 @@
 ---
 title: "Troubleshooting"
-description: "Common issues and solutions for preview-deployer"
+description: "Common issues and solutions for Prvue"
 ---
 
-Common issues and solutions for preview-deployer.
+Common issues and solutions for Prvue.
 
 ## Setup Issues
 
@@ -45,7 +45,7 @@ Common issues and solutions for preview-deployer.
 
 - Check environment variables are set correctly
 - Verify Node.js is installed: `node --version`
-- Check orchestrator logs: `journalctl -u preview-deployer-orchestrator -f`
+- Check orchestrator logs: `journalctl -u preview-orchestrator -f`
 
 ## Deployment Issues
 
@@ -71,7 +71,7 @@ Common issues and solutions for preview-deployer.
 
    ```bash
    ssh root@SERVER_IP
-   journalctl -u preview-deployer-orchestrator -f
+   journalctl -u preview-orchestrator -f
    ```
 
 4. Test webhook manually:
@@ -123,7 +123,7 @@ Common issues and solutions for preview-deployer.
 
 - **Husky**: Set `ENV HUSKY=0` before the install step in your Dockerfile so the prepare script is a no-op in Docker/CI.
 - **General**: Move the script's dependency to `dependencies` if it must run in production builds, or in the Dockerfile run install with `--ignore-scripts` and then run only the commands you need (e.g. build).
-- **Preview-deployer**: When the repo has no Dockerfile, we inject a default that sets `HUSKY=0` so this case is avoided for our template.
+- **Prvue**: When the repo has no Dockerfile, we inject a default that sets `HUSKY=0` so this case is avoided for our template.
 
 ### Health Check Failures
 
@@ -286,7 +286,7 @@ Common issues and solutions for preview-deployer.
 
    ```bash
    ssh root@SERVER_IP
-   journalctl -u preview-deployer-orchestrator | grep cleanup
+   journalctl -u preview-orchestrator | grep cleanup
    ```
 
 2. Verify TTL configuration:
@@ -380,10 +380,10 @@ To set via systemd override:
 
 ```bash
 ssh root@SERVER_IP
-systemctl edit preview-deployer-orchestrator
+systemctl edit preview-orchestrator
 # Add: Environment="LOG_LEVEL=debug"
 systemctl daemon-reload
-systemctl restart preview-deployer-orchestrator
+systemctl restart preview-orchestrator
 ```
 
 ### Check All Services
@@ -400,9 +400,9 @@ systemctl status nginx
 nginx -t
 
 # Orchestrator
-systemctl status preview-deployer-orchestrator
+systemctl status preview-orchestrator
 tail -n 50 /opt/preview-deployer/logs/orchestrator.log
-# Or: journalctl -u preview-deployer-orchestrator -n 50
+# Or: journalctl -u preview-orchestrator -n 50
 ```
 
 ### Manual Testing

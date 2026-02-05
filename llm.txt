@@ -1,10 +1,10 @@
-# Preview Deployer – Documentation (docs.prvue.dev)
+# Prvue – Documentation (docs.prvue.dev)
 
-Preview Deployer creates isolated preview environments for backend applications when GitHub pull requests are opened. Each PR gets its own Docker containers (app + database), path-based routing via nginx, and automatic cleanup when the PR closes or after a configurable TTL.
+Prvue creates isolated preview environments for backend applications when GitHub pull requests are opened. Each PR gets its own Docker containers (app + database), path-based routing via nginx, and automatic cleanup when the PR closes or after a configurable TTL.
 
 ## Documentation site (Mintlify)
 
-This documentation lives in the docs.prvue.dev repo and is built with Mintlify. It is the canonical user and contributor docs for Preview Deployer.
+This documentation lives in the docs.prvue.dev repo and is built with Mintlify. It is the canonical user and contributor docs for Prvue.
 
 ## Main sections
 
@@ -17,7 +17,7 @@ This documentation lives in the docs.prvue.dev repo and is built with Mintlify. 
 
 ## Main repo and example repos
 
-- **Main repo**: preview-deployer (Terraform, Ansible, orchestrator, CLI). Replace "your-org" with your org when linking.
+- **Main repo**: prvue (Terraform, Ansible, orchestrator, CLI). Replace "your-org" with your org when linking.
 - **Example repos**: nestjs-project-preview-example, laravel-project-preview-example, go-project-preview-example, python-project-preview-example, rust-project-preview-example. Use placeholder URLs until published; document "Replace with your repo URL" where relevant.
 
 ## For AI tools and agents

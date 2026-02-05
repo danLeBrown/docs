@@ -6,8 +6,8 @@ This document is for AI agents and contributors starting a new session. It summa
 
 ## 1. Purpose of this repo
 
-- **docs.prvue.dev** is the **documentation repository** for **Preview Deployer**.
-- **Preview Deployer** is the main project (lives in a separate repo: `preview-deployer`). It creates isolated preview environments for backend apps when GitHub PRs are opened (Terraform, Ansible, orchestrator, CLI).
+- **docs.prvue.dev** is the **documentation repository** for **Prvue**.
+- **Prvue** is the main project (lives in a separate repo: `prvue`). It creates isolated preview environments for backend apps when GitHub PRs are opened (Terraform, Ansible, orchestrator, CLI).
 - This repo **only** holds the docs. The docs are built with **Mintlify** and published at **docs.prvue.dev** (or run locally with `mintlify dev`).
 - **Do not** put application code here. All content is MDX/Markdown and config (`docs.json`, etc.).
 
@@ -15,10 +15,10 @@ This document is for AI agents and contributors starting a new session. It summa
 
 ## 2. What was discussed and the plan we executed
 
-We executed the plan from **Mintlify Documentation for Preview Deployer** (e.g. `mintlify_docs_for_preview_deployer_*.plan.md`). Summary:
+We executed the plan from **Mintlify Documentation for Prvue** (e.g. `mintlify_docs_for_preview_deployer_*.plan.md`). Summary:
 
-- **Goal**: Set up a Mintlify doc site for Preview Deployer, migrate existing markdown docs into it, and add an Examples section for the five example repos (NestJS, Laravel, Go, Python, Rust).
-- **Location**: All doc **file changes** were made in **docs.prvue.dev** (this repo). The **preview-deployer** repo only had its README updated to link to this docs site.
+- **Goal**: Set up a Mintlify doc site for Prvue, migrate existing markdown docs into it, and add an Examples section for the five example repos (NestJS, Laravel, Go, Python, Rust).
+- **Location**: All doc **file changes** were made in **docs.prvue.dev** (this repo). The **prvue** repo only had its README updated to link to this docs site.
 - **Conventions**: We followed **docs.prvue.dev/.cursor/rules.md** (Mintlify components, frontmatter, tone) and the plan’s nav/structure.
 
 ---
@@ -27,13 +27,13 @@ We executed the plan from **Mintlify Documentation for Preview Deployer** (e.g. 
 
 | Step | What was done |
 |------|----------------|
-| **1. Mintlify config** | **docs.json** updated for Preview Deployer: name "Preview Deployer", single "Guides" tab with groups: Getting Started, Guides, Examples, Operations, Reference. Colors, favicon, logo, navbar (GitHub button). |
-| **2. Intro page** | **index.mdx** rewritten as Preview Deployer intro: value prop, cards to Quickstart/Configuration/Architecture/Examples, next steps. |
-| **3. Root docs (migrated)** | Five docs migrated from **preview-deployer/docs/** to MDX in this repo with internal links fixed to Mintlify paths: **quickstart.mdx**, **configuration.mdx**, **architecture.mdx**, **testing.mdx**, **troubleshooting.mdx**. |
+| **1. Mintlify config** | **docs.json** updated for Prvue: name "Prvue", single "Guides" tab with groups: Getting Started, Guides, Examples, Operations, Reference. Colors, favicon, logo, navbar (GitHub button). |
+| **2. Intro page** | **index.mdx** rewritten as Prvue intro: value prop, cards to Quickstart/Configuration/Architecture/Examples, next steps. |
+| **3. Root docs (migrated)** | Five docs migrated from **prvue/docs/** to MDX in this repo with internal links fixed to Mintlify paths: **quickstart.mdx**, **configuration.mdx**, **architecture.mdx**, **testing.mdx**, **troubleshooting.mdx**. |
 | **4. Examples section** | **examples/index.mdx** (overview, supported vs custom compose) + **examples/nestjs.mdx**, **laravel.mdx**, **go.mdx**, **python.mdx**, **rust.mdx** (one page per example repo; key files, config snippets, links to READMEs). |
 | **5. Reference section** | **reference/orchestrator-how-it-works.mdx**, **reference/implementation-plan.mdx**, **reference/agent-handoff-prompt.mdx**, **reference/documentation-guide.mdx** (rules and standards for writing docs). |
-| **6. llm.txt** | **llm.txt** at repo root: plain-language map of Preview Deployer, doc site sections, main repo and example repos, note for AI tools to keep it updated. |
-| **7. preview-deployer README** | In the **preview-deployer** repo: Documentation section now points to **docs.prvue.dev** and lists Quickstart, Architecture, Configuration, Examples, Testing, Troubleshooting with links to this site. Quick Start and Testing links updated to use docs.prvue.dev. |
+| **6. llm.txt** | **llm.txt** at repo root: plain-language map of Prvue, doc site sections, main repo and example repos, note for AI tools to keep it updated. |
+| **7. prvue README** | In the **prvue** repo: Documentation section now points to **docs.prvue.dev** and lists Quickstart, Architecture, Configuration, Examples, Testing, Troubleshooting with links to this site. Quick Start and Testing links updated to use docs.prvue.dev. |
 | **8. docs.prvue.dev README** | **README.md** in this repo rewritten for the docs repo: purpose, contents, development (`mintlify dev`), publishing, contributing (link to Documentation guide and `.cursor/rules.md`), resources. |
 
 ---
@@ -46,7 +46,7 @@ docs.prvue.dev/
 │   ├── rules.md          # Mintlify + technical writing rules (required reading for edits)
 │   └── agent-guide.md    # This file — context and handoff for agents
 ├── docs.json             # Mintlify config: name, nav, colors, logo, navbar
-├── index.mdx             # Homepage (Preview Deployer intro)
+├── index.mdx             # Homepage (Prvue intro)
 ├── quickstart.mdx        # Getting started
 ├── configuration.mdx     # Config reference
 ├── architecture.mdx      # System design
@@ -89,14 +89,14 @@ docs.prvue.dev/
 
 ---
 
-## 6. Two repos: preview-deployer vs docs.prvue.dev
+## 6. Two repos: prvue vs docs.prvue.dev
 
 | Repo | Role |
 |------|------|
-| **preview-deployer** | Application: Terraform, Ansible, orchestrator, CLI, templates. **Source of truth for product behavior.** Docs *content* was originally in `preview-deployer/docs/` (markdown); we **migrated** that content into docs.prvue.dev and fixed links. preview-deployer README now **links to** docs.prvue.dev. |
+| **prvue** | Application: Terraform, Ansible, orchestrator, CLI, templates. **Source of truth for product behavior.** Docs *content* was originally in `prvue/docs/` (markdown); we **migrated** that content into docs.prvue.dev and fixed links. prvue README now **links to** docs.prvue.dev. |
 | **docs.prvue.dev** | Documentation only. Mintlify site; all published doc content lives here. No app code. |
 
-- When documenting **product behavior, config, or architecture**, the **source of truth** is the preview-deployer repo (code, `preview-deployer/docs/` if anything remains). This repo is the **published doc site**.
+- When documenting **product behavior, config, or architecture**, the **source of truth** is the prvue repo (code, `prvue/docs/` if anything remains). This repo is the **published doc site**.
 - When adding or changing **doc pages, nav, or doc conventions**, work in **docs.prvue.dev** and follow **.cursor/rules.md** and **reference/documentation-guide.mdx**.
 
 ---

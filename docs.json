@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Preview Deployer",
+  "name": "Prvue",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -81,7 +81,7 @@
     "primary": {
       "type": "button",
       "label": "GitHub",
-      "href": "https://github.com/danLeBrown/preview-deployer"
+      "href": "https://github.com/danLeBrown/prvue"
     }
   },
   "contextual": {

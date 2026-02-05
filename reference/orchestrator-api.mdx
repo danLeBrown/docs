@@ -144,7 +144,7 @@ This endpoint immediately tears down the preview. Use it when you need to force-
 
 ## Debugging tips
 
-1. **Orchestrator not responding**: Check that the service is running (`journalctl -u preview-deployer-orchestrator -f`) and that **ORCHESTRATOR_PORT** (default 3000) is correct. Call `GET /health` from the server.
+1. **Orchestrator not responding**: Check that the service is running (`journalctl -u preview-orchestrator -f`) and that **ORCHESTRATOR_PORT** (default 3000) is correct. Call `GET /health` from the server.
 2. **List current previews**: Use `GET /api/previews` to see all deployments, their `deploymentId`, `status`, and `exposedAppPort`/`exposedDbPort`. Compare with `docker ps` and nginx configs.
 3. **Force-clean a preview**: If a preview is stuck or you need to free a port, use `DELETE /api/previews/:deploymentId` with the id from `GET /api/previews`. Then verify with `GET /api/previews` and `docker ps`.
 4. **Webhook signature**: Manual `POST /webhook/github` calls must include a valid `X-Hub-Signature-256` header (HMAC SHA256 of the raw JSON body with your `GITHUB_WEBHOOK_SECRET`). See [GitHub webhook signature verification](https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries).
